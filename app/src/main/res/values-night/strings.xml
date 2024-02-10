@@ -2,4 +2,6 @@
 <resources>
     <string name="app_name">Gold Signal Pro</string>
     <string name="please_wait">Please Wait...</string>
+    <string name="app_update_notification">Dear user, you are using an old version. Update your app to continue the service.</string>
+    <string name="update">UPDATE</string>
 </resources>

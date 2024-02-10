@@ -2,12 +2,13 @@ package com.example.goldsignalpro.home;
 
 import android.content.Context;
 
+import com.example.goldsignalpro.model.AppVersionModel;
 import com.example.goldsignalpro.model.LatestSignal;
 import com.example.goldsignalpro.model.SignalsModel;
 
 public interface HomeContact {
     interface View{
-        void need_to_update_app(String version_name);
+        void need_to_update_app(AppVersionModel appVersionModel);
         void app_already_updated();
         void renderSignalList(SignalsModel signalsModel);
         void signal_fetch_error(String message);

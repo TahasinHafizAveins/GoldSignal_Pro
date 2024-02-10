@@ -26,17 +26,41 @@ public class HomePresenter implements HomeContact.Presenter{
 
     @Override
     public void check_app_version(Context context, String installed_app_version) {
-        int version_diff = compareVersionNames(installed_app_version,"1.0.1" );
-        if (version_diff == -1) {
-            mView.need_to_update_app("");
-        } else {
-            mView.app_already_updated();
-        }
+       ApiEndPoints call = RetrofitService.createService(context,ApiEndPoints.class);
+       call.getAppVersion().enqueue(new Callback<AppVersionModel>() {
+           @Override
+           public void onResponse(Call<AppVersionModel> call, Response<AppVersionModel> response) {
+               if (response.isSuccessful()){
+                   if (response.body() != null){
+                       AppVersionModel appVersionModel = new AppVersionModel();
+                       appVersionModel.setVersion(response.body().getVersion());
+                       appVersionModel.setApp_link(response.body().getApp_link());
+
+                       int version_diff = compareVersionNames(installed_app_version,appVersionModel.getVersion().toString().trim() );
+                       if (version_diff == -1) {
+                           mView.need_to_update_app(appVersionModel);
+                       } else {
+                           mView.app_already_updated();
+                       }
+                   }
+               }else {
+                   mView.app_already_updated();
+               }
+           }
+
+           @Override
+           public void onFailure(Call<AppVersionModel> call, Throwable t) {
+               mView.app_already_updated();
+           }
+       });
+
+
+
     }
 
     @Override
     public void getSignalList(Context context,String page_number) {
-        Log.d("%%%%%%%%%%%%%%%","-------getSignalList---------");
+        Log.d("^^&&&&%%%%%5","-------getSignalList---------");
         ApiEndPoints call = RetrofitService.createService(context,ApiEndPoints.class);
         call.getSignals(page_number).enqueue(new Callback<SignalsModel>() {
             @Override

@@ -5,6 +5,7 @@ import static com.example.goldsignalpro.utils.utils.getFormattedTime;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -100,7 +101,16 @@ public class SignalAdapter extends RecyclerView.Adapter<SignalAdapter.SignalAdap
                 }
                 if (signal.getProfit_status() != null){
                     tv_profit_status.setVisibility(View.VISIBLE);
-                    tv_profit_status.setText(String.format("Profit Status: %s", signal.getProfit_status()));
+                    if (signal.getProfit_status().trim().equals("Open")) {
+                        tv_profit_status.setTextColor(Color.parseColor("#FFAAAAAA"));
+                        tv_profit_status.setText(String.format(" %s", signal.getProfit_status()));
+                    } else if (signal.getProfit_status().trim().equals("Profit")) {
+                        tv_profit_status.setTextColor(Color.parseColor("#5FAD56"));
+                        tv_profit_status.setText(String.format(" %s", signal.getProfit_status().toUpperCase()));
+                    } else if (signal.getProfit_status().trim().equals("Loss")) {
+                        tv_profit_status.setTextColor(Color.parseColor("#D0312D"));
+                        tv_profit_status.setText(String.format(" %s", signal.getProfit_status().toUpperCase()));
+                    }
                 }else {
                     tv_profit_status.setVisibility(View.GONE);
                 }

@@ -47,7 +47,7 @@
             android:gravity="center"
             android:weightSum="4">
             <TextView
-                android:id="@+id/tv_signal_title"
+                android:id="@+id/tv__shimmer_signal_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
@@ -66,7 +66,7 @@
                 android:orientation="vertical"
                 android:visibility="invisible">
                 <TextView
-                    android:id="@+id/tv_signal_status_active"
+                    android:id="@+id/tv__shimmer_signal_status_active"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAlignment="center"
@@ -80,7 +80,7 @@
                     />
 
                 <TextView
-                    android:id="@+id/tv_signal_status_close"
+                    android:id="@+id/tv__shimmer_signal_status_close"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAlignment="center"
@@ -99,7 +99,7 @@
 
 
         <TextView
-            android:id="@+id/tv_profit_status"
+            android:id="@+id/tv__shimmer_profit_status"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/space4dp"
@@ -108,7 +108,7 @@
             android:textSize="12sp" />
 
         <TextView
-            android:id="@+id/tv_signal_time"
+            android:id="@+id/tv__shimmer_signal_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawablePadding="@dimen/space4dp"

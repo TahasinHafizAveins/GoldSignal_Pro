@@ -14,8 +14,8 @@ public class RetrofitService {
 
     private static final String API_BASE_URL = "https://goldsignalpro.com/";
     private static final OkHttpClient okHttpClient = new OkHttpClient.Builder()
-            .readTimeout(40, TimeUnit.SECONDS)
-            .connectTimeout(40, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .connectTimeout(60, TimeUnit.SECONDS)
             .build();
     public static Retrofit adapter = null;
     private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder()

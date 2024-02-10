@@ -10,7 +10,7 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface ApiEndPoints {
-    @GET("/app-version.php")
+    @GET("/api/app-version")
     Call<AppVersionModel> getAppVersion();
 
     @GET("/api/signals")

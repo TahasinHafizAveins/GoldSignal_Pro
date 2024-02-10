@@ -3,6 +3,7 @@ package com.example.goldsignalpro.home;
 import static com.example.goldsignalpro.utils.utils.calculateRemainingTime;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,7 +17,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.goldsignalpro.BuildConfig;
 import com.example.goldsignalpro.R;
+import com.example.goldsignalpro.model.AppVersionModel;
 import com.example.goldsignalpro.model.LatestSignal;
 import com.example.goldsignalpro.model.SignalsModel;
 import com.example.goldsignalpro.signal_details.SignalDetailsActivity;
@@ -41,10 +44,9 @@ public class HomeActivity extends AppCompatActivity implements HomeContact.View 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mPresenter = new HomePresenter(HomeActivity.this);
+        mPresenter.check_app_version(HomeActivity.this, BuildConfig.VERSION_NAME);
 
-        initView();
-
-        checkInstalledAppVersion();
     }
 
     @Override
@@ -57,9 +59,8 @@ public class HomeActivity extends AppCompatActivity implements HomeContact.View 
     protected void onResume() {
         super.onResume();
         if (is_resume) {
-            initView();
-
-            checkInstalledAppVersion();
+            mPresenter = new HomePresenter(HomeActivity.this);
+            mPresenter.check_app_version(HomeActivity.this, BuildConfig.VERSION_NAME);
         }
     }
 
@@ -75,9 +76,6 @@ public class HomeActivity extends AppCompatActivity implements HomeContact.View 
         shimmerLayout_latest.setVisibility(View.VISIBLE);
         shimmerLayout_latest.startShimmer();
 
-
-        mPresenter = new HomePresenter(HomeActivity.this);
-        mPresenter.getSignalList(HomeActivity.this, String.valueOf(page));
         mPresenter.getLatest(HomeActivity.this);
     }
 
@@ -117,6 +115,7 @@ public class HomeActivity extends AppCompatActivity implements HomeContact.View 
             @Override
             public void onRefresh() {
                 srl_home.setRefreshing(false);
+                page = 1;
                 initView();
             }
         });
@@ -136,13 +135,17 @@ public class HomeActivity extends AppCompatActivity implements HomeContact.View 
     }
 
     @Override
-    public void need_to_update_app(String version_name) {
-
+    public void need_to_update_app(AppVersionModel appVersionModel) {
+        new android.app.AlertDialog.Builder(HomeActivity.this).setMessage(getString(R.string.app_update_notification)).setCancelable(false).setTitle("")
+                .setPositiveButton(R.string.update, (dialog, which) -> {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(appVersionModel.getApp_link())));
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        }).show();
     }
 
     @Override
     public void app_already_updated() {
-
+        initView();
     }
 
     @Override
@@ -178,7 +181,6 @@ public class HomeActivity extends AppCompatActivity implements HomeContact.View 
             shimmerLayout_latest.setVisibility(View.GONE);
             ll_latest_signal.setVisibility(View.VISIBLE);
 
-            Log.d("********************", "----------showLatestSignal--------------");
             if (latest_signal.getTitle() != null) {
                 tv_signal_title.setText(latest_signal.getTitle());
             }
@@ -186,12 +188,12 @@ public class HomeActivity extends AppCompatActivity implements HomeContact.View 
                 tv_signal_time.setText(calculateRemainingTime(latest_signal.getCreated_at()) + " ago");
             }
         }
+
+        mPresenter.getSignalList(HomeActivity.this, String.valueOf(page));
     }
 
     public void gotoDetailsActivity(SignalsModel.Data selected_signal) {
-        Log.d("$$$$$$$$$$$$$", "----------------selected_signal-------" + selected_signal.toString());
         SaveSignalData.getInstance().setData(selected_signal);
         startActivity(new Intent(HomeActivity.this, SignalDetailsActivity.class));
-        finish();
     }
 }

@@ -5,4 +5,6 @@
     <dimen name="space8dp">8dp</dimen>
     <dimen name="space10dp">10dp</dimen>
     <dimen name="space2dp">2dp</dimen>
+    <dimen name="space16dp">16dp</dimen>
+    <dimen name="space20dp">20dp</dimen>
 </resources>
