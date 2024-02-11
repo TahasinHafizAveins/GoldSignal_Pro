@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -69,7 +70,9 @@ public class SignalAdapter extends RecyclerView.Adapter<SignalAdapter.SignalAdap
     }
 
     public class SignalAdapterHolder extends RecyclerView.ViewHolder implements View.OnClickListener  {
-        TextView  tv_signal_title,tv_signal_status_active, tv_signal_status_close, tv_profit_status,tv_signal_time;
+        TextView  tv_signal_title,tv_signal_status_active, tv_signal_status_close, tv_profit_status,tv_signal_open_profit_pips,tv_signal_time,tv_signal_open_profit_pips_label;
+        RelativeLayout rl_pips;
+
         public SignalAdapterHolder(View view) {
             super(view);
 
@@ -77,6 +80,9 @@ public class SignalAdapter extends RecyclerView.Adapter<SignalAdapter.SignalAdap
             tv_signal_status_active = view.findViewById(R.id.tv_signal_status_active);
             tv_signal_status_close = view.findViewById(R.id.tv_signal_status_close);
             tv_profit_status = view.findViewById(R.id.tv_profit_status);
+            tv_signal_open_profit_pips = view.findViewById(R.id.tv_signal_open_profit_pips);
+            tv_signal_open_profit_pips_label = view.findViewById(R.id.tv_signal_open_profit_pips_label);
+            rl_pips = view.findViewById(R.id.rl_pips);
             tv_signal_time = view.findViewById(R.id.tv_signal_time);
 
             view.setOnClickListener(this);
@@ -100,16 +106,30 @@ public class SignalAdapter extends RecyclerView.Adapter<SignalAdapter.SignalAdap
                     }
                 }
                 if (signal.getProfit_status() != null){
-                    tv_profit_status.setVisibility(View.VISIBLE);
+                    rl_pips.setVisibility(View.GONE);
                     if (signal.getProfit_status().trim().equals("Open")) {
                         tv_profit_status.setTextColor(Color.parseColor("#FFAAAAAA"));
                         tv_profit_status.setText(String.format(" %s", signal.getProfit_status()));
+
+
                     } else if (signal.getProfit_status().trim().equals("Profit")) {
                         tv_profit_status.setTextColor(Color.parseColor("#5FAD56"));
                         tv_profit_status.setText(String.format(" %s", signal.getProfit_status().toUpperCase()));
+                        if (signal.getProfit_pips() != null) {
+                            rl_pips.setVisibility(View.VISIBLE);
+                            tv_signal_open_profit_pips_label.setText("Trade Profit:");
+                            tv_signal_open_profit_pips.setTextColor(Color.parseColor("#5FAD56"));
+                            tv_signal_open_profit_pips.setText(String.format(" %s", signal.getProfit_pips()));
+                        }
                     } else if (signal.getProfit_status().trim().equals("Loss")) {
                         tv_profit_status.setTextColor(Color.parseColor("#D0312D"));
                         tv_profit_status.setText(String.format(" %s", signal.getProfit_status().toUpperCase()));
+                        if (signal.getProfit_pips() != null) {
+                            rl_pips.setVisibility(View.VISIBLE);
+                            tv_signal_open_profit_pips_label.setText("Trade Loss:");
+                            tv_signal_open_profit_pips.setTextColor(Color.parseColor("#D0312D"));
+                            tv_signal_open_profit_pips.setText(String.format(" %s", signal.getProfit_pips()));
+                        }
                     }
                 }else {
                     tv_profit_status.setVisibility(View.GONE);

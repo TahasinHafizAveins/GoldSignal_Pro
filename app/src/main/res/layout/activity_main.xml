@@ -5,117 +5,160 @@
     android:id="@+id/srl_home"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".home.HomeActivity"
-    android:background="@android:color/white">
+    android:background="@android:color/white"
+    tools:context=".home.HomeActivity">
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nsv_home"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="@dimen/space10dp">
+            android:orientation="vertical">
 
-            <com.facebook.shimmer.ShimmerFrameLayout
-                android:id="@+id/shimmerLayout_latest"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="170dp"
-                android:layout_margin="4dp"
-                app:shimmer_repeat_mode="restart"
-                app:shimmer_shape="radial">
+                android:layout_height="match_parent">
 
-                <include layout="@layout/shimmer_latest_signal" />
-            </com.facebook.shimmer.ShimmerFrameLayout>
+                <com.google.android.material.appbar.AppBarLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/ll_latest_signal"
+                    <include layout="@layout/layout_app_bar"/>
+
+                </com.google.android.material.appbar.AppBarLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="170dp"
-                android:layout_margin="4dp"
-                android:backgroundTint="@color/black"
-                android:visibility="invisible"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="4dp">
+                android:layout_height="match_parent"
+                android:padding="@dimen/space10dp">
 
-                <RelativeLayout
+                <com.facebook.shimmer.ShimmerFrameLayout
+                    android:id="@+id/shimmerLayout_latest"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentTop="true"
-                    android:layout_margin="@dimen/space10dp"
-                    android:background="@android:color/transparent">
+                    android:layout_height="170dp"
+                    android:layout_margin="4dp"
+                    app:shimmer_repeat_mode="restart"
+                    app:shimmer_shape="radial">
 
-                    <ImageView
+                    <include layout="@layout/shimmer_latest_signal" />
+                </com.facebook.shimmer.ShimmerFrameLayout>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/ll_latest_signal"
+                    android:layout_width="match_parent"
+                    android:layout_height="170dp"
+                    android:layout_margin="4dp"
+                    android:backgroundTint="@color/black"
+                    android:visibility="invisible"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="4dp">
+
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="100dp"
+                        android:layout_height="match_parent"
                         android:layout_alignParentTop="true"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/gold_signal_img" />
+                        android:layout_margin="@dimen/space10dp"
+                        android:background="@android:color/transparent">
 
-                    <TextView
-                        android:id="@+id/tv_latest_signal_title"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_above="@+id/tv_latest_signal_time"
-                        android:layout_marginHorizontal="4dp"
-                        android:layout_marginVertical="@dimen/space4dp"
-                        android:text="-------"
-                        android:textColor="@color/white"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="100dp"
+                            android:layout_alignParentTop="true"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/gsp_banner" />
 
-                    <TextView
-                        android:id="@+id/tv_latest_signal_time"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:layout_marginBottom="@dimen/space4dp"
-                        android:drawablePadding="@dimen/space4dp"
-                        android:text="-------"
-                        android:textColor="@color/white"
-                        android:textSize="14sp"
-                        app:drawableLeftCompat="@drawable/ic_clock_white" />
-                </RelativeLayout>
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_above="@+id/tv_latest_signal_time"
+                            android:layout_marginHorizontal="4dp"
+                            android:layout_marginVertical="@dimen/space4dp">
 
-            </androidx.cardview.widget.CardView>
+                            <TextView
+                                android:id="@+id/tv_latest_signal_title"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_toStartOf="@+id/tv_latest_signal_status"
+                                android:text="-------"
+                                android:textColor="@color/white"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tv_latest_signal_status"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:layout_marginHorizontal="@dimen/space4dp"
+                                android:text="-------"
+                                android:textColor="@color/purple_200"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:visibility="gone"
+                                android:layout_centerVertical="true"/>
+
+                        </RelativeLayout>
 
 
-            <com.facebook.shimmer.ShimmerFrameLayout
-                android:id="@+id/shimmerLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/ll_latest_signal"
-                app:shimmer_repeat_mode="restart"
-                app:shimmer_shape="radial">
+                        <TextView
+                            android:id="@+id/tv_latest_signal_time"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentBottom="true"
+                            android:layout_marginBottom="@dimen/space4dp"
+                            android:drawablePadding="@dimen/space4dp"
+                            android:text="-------"
+                            android:textColor="@color/white"
+                            android:textSize="14sp"
+                            app:drawableLeftCompat="@drawable/ic_clock_white" />
+                    </RelativeLayout>
 
-                <LinearLayout
+                </androidx.cardview.widget.CardView>
+
+
+                <com.facebook.shimmer.ShimmerFrameLayout
+                    android:id="@+id/shimmerLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_below="@+id/ll_latest_signal"
+                    app:shimmer_repeat_mode="restart"
+                    app:shimmer_shape="radial">
 
-                    <include layout="@layout/shimmer_signal_item_layout" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
 
-                    <include layout="@layout/shimmer_signal_item_layout" />
+                        <include layout="@layout/shimmer_signal_item_layout" />
 
-                    <include layout="@layout/shimmer_signal_item_layout" />
+                        <include layout="@layout/shimmer_signal_item_layout" />
 
-                    <include layout="@layout/shimmer_signal_item_layout" />
+                        <include layout="@layout/shimmer_signal_item_layout" />
 
-                    <include layout="@layout/shimmer_signal_item_layout" />
+                        <include layout="@layout/shimmer_signal_item_layout" />
 
-                    <include layout="@layout/shimmer_signal_item_layout" />
-                </LinearLayout>
-            </com.facebook.shimmer.ShimmerFrameLayout>
+                        <include layout="@layout/shimmer_signal_item_layout" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_signals"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/ll_latest_signal"
-                android:layout_alignParentBottom="true"
-                tools:listitem="@layout/signal_item" />
-        </RelativeLayout>
+                        <include layout="@layout/shimmer_signal_item_layout" />
+                    </LinearLayout>
+                </com.facebook.shimmer.ShimmerFrameLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_signals"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/ll_latest_signal"
+                    android:layout_alignParentBottom="true"
+                    tools:listitem="@layout/signal_item" />
+            </RelativeLayout>
+
+        </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
 

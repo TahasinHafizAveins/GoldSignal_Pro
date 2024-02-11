@@ -2,33 +2,65 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:layout_marginBottom="@dimen/space10dp"
-    android:background="@android:color/white">
+    android:background="@android:color/white"
+    android:orientation="vertical">
 
-    <ImageView
+    <LinearLayout
+        style="@style/SpecificCornerRounded"
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:src="@drawable/gold_signal_img"
-        android:scaleType="fitCenter" />
+        android:background="@android:color/black">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/gsp_banner" />
+    </LinearLayout>
 
 
-    <TextView
-        android:id="@+id/tv_signal_details_title"
-        android:layout_marginHorizontal="@dimen/space8dp"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/space8dp"
         android:layout_marginTop="@dimen/space10dp"
         android:layout_marginBottom="@dimen/space4dp"
-        android:text=""
-        android:textColor="@android:color/black"
-        android:textSize="16sp" />
+        android:layout_gravity="center">
+
+        <TextView
+            android:id="@+id/tv_signal_details_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@+id/tv_details_signal_status"
+            android:text=""
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_centerVertical="true"/>
+
+        <TextView
+            android:id="@+id/tv_details_signal_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginHorizontal="@dimen/space4dp"
+            android:text=""
+            android:textColor="@color/purple_500"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            android:layout_centerVertical="true"/>
+
+    </RelativeLayout>
+
+
 
     <TextView
         android:id="@+id/tv_signal_details_tp_1"
-        android:layout_marginHorizontal="@dimen/space8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/space8dp"
         android:layout_marginBottom="@dimen/space4dp"
         android:text=""
         android:textColor="@android:color/black"
@@ -36,9 +68,9 @@
 
     <TextView
         android:id="@+id/tv_signal_details_tp_2"
-        android:layout_marginHorizontal="@dimen/space8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/space8dp"
         android:layout_marginBottom="@dimen/space4dp"
         android:text=""
         android:textColor="@android:color/black"
@@ -46,44 +78,81 @@
 
     <TextView
         android:id="@+id/tv_signal_details_stop_lose"
-        android:layout_marginHorizontal="@dimen/space8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space8dp"
+        android:layout_marginHorizontal="@dimen/space8dp"
         android:layout_marginBottom="@dimen/space4dp"
         android:text=""
         android:textColor="@android:color/black"
         android:textSize="16sp" />
 
-    <TextView
-        android:id="@+id/tv_signal_details_profit_status"
-        android:layout_marginHorizontal="@dimen/space8dp"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/space4dp"
-        android:text=""
-        android:textColor="@android:color/black"
-        android:textSize="16sp" />
+        android:layout_marginHorizontal="@dimen/space8dp"
+        android:layout_marginTop="@dimen/space10dp"
+        android:layout_marginBottom="@dimen/space4dp">
 
-    <TextView
-        android:id="@+id/tv_signal_details_profit_pips"
-        android:layout_marginHorizontal="@dimen/space8dp"
+        <TextView
+            android:id="@+id/tv_signal_details_profit_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Trade Status: "
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_signal_details_profit_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space4dp"
+            android:layout_toEndOf="@id/tv_signal_details_profit_title"
+            android:text=""
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/rl_signal_details_profit_pips"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/space8dp"
         android:layout_marginBottom="@dimen/space4dp"
-        android:text=""
-        android:textColor="@android:color/black"
-        android:textSize="16sp" />
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tv_signal_details_profit_pips_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_signal_details_profit_pips"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space4dp"
+            android:layout_toEndOf="@id/tv_signal_details_profit_pips_title"
+            android:text=""
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
+    </RelativeLayout>
+
 
     <TextView
         android:id="@+id/tv_signal_details_time"
-        android:layout_marginHorizontal="@dimen/space8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/space8dp"
         android:layout_marginBottom="@dimen/space4dp"
+        android:layout_marginTop="@dimen/space10dp"
+        android:drawableLeft="@drawable/ic_clock_24"
+        android:drawablePadding="@dimen/space4dp"
         android:text=""
         android:textColor="@android:color/black"
-        android:textSize="16sp"
-        android:drawableLeft="@drawable/ic_clock_24"
-        android:drawablePadding="@dimen/space4dp"/>
+        android:textSize="16sp" />
 </LinearLayout>

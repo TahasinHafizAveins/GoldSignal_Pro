@@ -1,16 +1,22 @@
 package com.example.goldsignalpro.home;
 
 import static com.example.goldsignalpro.utils.utils.calculateRemainingTime;
+import static com.example.goldsignalpro.utils.utils_string.ADMOB_APP_ID;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,14 +28,22 @@ import com.example.goldsignalpro.R;
 import com.example.goldsignalpro.model.AppVersionModel;
 import com.example.goldsignalpro.model.LatestSignal;
 import com.example.goldsignalpro.model.SignalsModel;
+import com.example.goldsignalpro.settings.SettingsActivity;
 import com.example.goldsignalpro.signal_details.SignalDetailsActivity;
 import com.example.goldsignalpro.utils.SaveSignalData;
 import com.facebook.shimmer.ShimmerFrameLayout;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 
 public class HomeActivity extends AppCompatActivity implements HomeContact.View {
-
+    Toolbar toolbar;
     RecyclerView rv_signals;
-    TextView tv_signal_title, tv_signal_time;
+    TextView tv_signal_title, tv_signal_time, tv_latest_signal_status;
+    ImageView iv_settings, iv_rate_us, iv_share;
     CardView ll_latest_signal;
     SignalAdapter signalAdapter;
     NestedScrollView nsv_home;
@@ -37,16 +51,29 @@ public class HomeActivity extends AppCompatActivity implements HomeContact.View 
 
     HomePresenter mPresenter;
     int page = 1, limit = 1;
+    LatestSignal latestSignal = new LatestSignal();
     private ShimmerFrameLayout shimmerFrameLayout, shimmerLayout_latest;
     private boolean is_resume = false;
+    private boolean rate_us_showing = false;
+
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        tool_bar_setup();
         mPresenter = new HomePresenter(HomeActivity.this);
         mPresenter.check_app_version(HomeActivity.this, BuildConfig.VERSION_NAME);
 
+    }
+
+    private void tool_bar_setup() {
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        // using toolbar as ActionBar
+        setSupportActionBar(toolbar);
+        toolbar.setTitle("GOLD SIGNALS");
     }
 
     @Override
@@ -58,10 +85,33 @@ public class HomeActivity extends AppCompatActivity implements HomeContact.View 
     @Override
     protected void onResume() {
         super.onResume();
+        rate_us_showing = false;
         if (is_resume) {
             mPresenter = new HomePresenter(HomeActivity.this);
             mPresenter.check_app_version(HomeActivity.this, BuildConfig.VERSION_NAME);
         }
+
+        adMobInit();
+        firebaseInit();
+    }
+
+    private void firebaseInit() {
+        FirebaseApp.initializeApp(HomeActivity.this);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(HomeActivity.this);
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.SCREEN_CLASS, "screen class");
+        bundle.putString(FirebaseAnalytics.Param.SCREEN_NAME, "custom screen name");
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW,bundle);
+    }
+
+    private void adMobInit() {
+        // Initialize the Mobile Ads SDK
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+                Log.d("############","---------------initializationStatus---------"+initializationStatus);
+            }
+        });
     }
 
     private void loadData() {
@@ -84,8 +134,12 @@ public class HomeActivity extends AppCompatActivity implements HomeContact.View 
         srl_home = findViewById(R.id.srl_home);
         rv_signals = findViewById(R.id.rv_signals);
         tv_signal_title = findViewById(R.id.tv_latest_signal_title);
+        tv_latest_signal_status = findViewById(R.id.tv_latest_signal_status);
         tv_signal_time = findViewById(R.id.tv_latest_signal_time);
         ll_latest_signal = findViewById(R.id.ll_latest_signal);
+        iv_settings = findViewById(R.id.iv_settings);
+        iv_rate_us = findViewById(R.id.iv_rate_us);
+        iv_share = findViewById(R.id.iv_share);
 
         signalAdapter = new SignalAdapter(HomeActivity.this);
 
@@ -120,6 +174,98 @@ public class HomeActivity extends AppCompatActivity implements HomeContact.View 
             }
         });
 
+        iv_settings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(HomeActivity.this, SettingsActivity.class));
+            }
+        });
+        iv_rate_us.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                rate_us();
+            }
+        });
+        iv_share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+
+        ll_latest_signal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (latestSignal != null) {
+                    SignalsModel.Data selected_data = new SignalsModel.Data();
+
+                    selected_data.setId(latestSignal.getId());
+                    selected_data.setTitle(latestSignal.getTitle());
+
+                    selected_data.setSignal_status(latestSignal.getSignal_status());
+                    selected_data.setProfit_status(latestSignal.getProfit_status());
+                    selected_data.setCreated_at(latestSignal.getCreated_at());
+                    selected_data.setSignal_description(latestSignal.getSignal_description());
+                    selected_data.setTp_1(latestSignal.getTp_1());
+                    selected_data.setTp_2(latestSignal.getTp_2());
+                    selected_data.setStop_loss(latestSignal.getStop_loss());
+                    selected_data.setProfit_pips(latestSignal.getProfit_pips());
+                    selected_data.setPips(latestSignal.getPips());
+
+                    gotoDetailsActivity(selected_data);
+                }
+            }
+        });
+    }
+
+    private void rate_us() {
+        if (!rate_us_showing) {
+            rate_us_showing = true;
+
+
+            AlertDialog.Builder alert = new AlertDialog.Builder(HomeActivity.this);
+
+            alert.setTitle("Rate Us!");
+            alert.setMessage(getResources().getString(R.string.app_rate_us_title));
+            alert.setPositiveButton(R.string.app_rate_us,
+                    new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            rate_us_showing = false;
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://goldsignalpro.com/")));
+                            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+
+                        }
+                    });
+            alert.setNegativeButton("Cancel",
+                    new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            rate_us_showing = false;
+                            dialog.cancel();
+                        }
+                    });
+
+
+            AlertDialog alertDialog = alert.create();
+            alertDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+
+                @Override
+                public void onShow(DialogInterface dialog) {
+
+                    Button positive= alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                    positive.setFocusable(true);
+                    positive.setFocusableInTouchMode(true);
+                    positive.requestFocus();
+                }
+            });
+
+            alertDialog.show();
+        }
     }
 
     private void setupAdapter() {
@@ -138,9 +284,9 @@ public class HomeActivity extends AppCompatActivity implements HomeContact.View 
     public void need_to_update_app(AppVersionModel appVersionModel) {
         new android.app.AlertDialog.Builder(HomeActivity.this).setMessage(getString(R.string.app_update_notification)).setCancelable(false).setTitle("")
                 .setPositiveButton(R.string.update, (dialog, which) -> {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(appVersionModel.getApp_link())));
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-        }).show();
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(appVersionModel.getApp_link())));
+                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                }).show();
     }
 
     @Override
@@ -177,12 +323,19 @@ public class HomeActivity extends AppCompatActivity implements HomeContact.View 
     @Override
     public void showLatestSignal(LatestSignal latest_signal) {
         if (latest_signal != null) {
+            latestSignal = new LatestSignal();
+            latestSignal = latest_signal;
+
             shimmerLayout_latest.stopShimmer();
             shimmerLayout_latest.setVisibility(View.GONE);
             ll_latest_signal.setVisibility(View.VISIBLE);
 
             if (latest_signal.getTitle() != null) {
                 tv_signal_title.setText(latest_signal.getTitle());
+            }
+            if (latest_signal.getSignal_status() != null) {
+                tv_latest_signal_status.setVisibility(View.VISIBLE);
+                tv_latest_signal_status.setText(latest_signal.getSignal_status().toUpperCase());
             }
             if (latest_signal.getCreated_at() != null) {
                 tv_signal_time.setText(calculateRemainingTime(latest_signal.getCreated_at()) + " ago");

@@ -3,9 +3,11 @@ package com.example.goldsignalpro.signal_details;
 import static com.example.goldsignalpro.utils.utils.calculateRemainingTime;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,7 +33,8 @@ public class SignalDetailsActivity extends AppCompatActivity implements SignalDe
     NestedScrollView nsv_detail;
     CardView ll_details_signal;
     RecyclerView rv_signals_details;
-    TextView tv_signal_title, tv_signal_tp_1, tv_signal_tp_2, tv_signal_stop_lose, tv_signal_profit_status, tv_signal_profit_pips, tv_signal_time;
+    TextView tv_signal_title,tv_details_signal_status, tv_signal_tp_1, tv_signal_tp_2, tv_signal_stop_lose, tv_signal_profit_status, tv_signal_details_profit_pips_title, tv_signal_profit_pips, tv_signal_time;
+    RelativeLayout rl_signal_details_profit_pips;
 
     int page = 1, limit = 1;
     SignalDetailsPresenter mPresenter;
@@ -76,8 +79,8 @@ public class SignalDetailsActivity extends AppCompatActivity implements SignalDe
         shimmerLayout_details_list.setVisibility(View.VISIBLE);
         shimmerLayout_details_list.startShimmer();
 
-        mPresenter.getSignalDetails(SignalDetailsActivity.this,data.getId());
-        mPresenter.getSignalList(SignalDetailsActivity.this,"1");
+        mPresenter.getSignalDetails(SignalDetailsActivity.this, data.getId());
+        mPresenter.getSignalList(SignalDetailsActivity.this, "1");
     }
 
     private void initView() {
@@ -86,11 +89,14 @@ public class SignalDetailsActivity extends AppCompatActivity implements SignalDe
         ll_details_signal = findViewById(R.id.ll_details_signal);
         rv_signals_details = findViewById(R.id.rv_signals_details);
         tv_signal_title = findViewById(R.id.tv_signal_details_title);
+        tv_details_signal_status = findViewById(R.id.tv_details_signal_status);
         tv_signal_tp_1 = findViewById(R.id.tv_signal_details_tp_1);
         tv_signal_tp_2 = findViewById(R.id.tv_signal_details_tp_2);
         tv_signal_stop_lose = findViewById(R.id.tv_signal_details_stop_lose);
         tv_signal_profit_status = findViewById(R.id.tv_signal_details_profit_status);
         tv_signal_profit_pips = findViewById(R.id.tv_signal_details_profit_pips);
+        tv_signal_details_profit_pips_title = findViewById(R.id.tv_signal_details_profit_pips_title);
+        rl_signal_details_profit_pips = findViewById(R.id.rl_signal_details_profit_pips);
         tv_signal_time = findViewById(R.id.tv_signal_details_time);
         srl_detail = findViewById(R.id.srl_detail);
         nsv_detail = findViewById(R.id.nsv_detail);
@@ -109,9 +115,9 @@ public class SignalDetailsActivity extends AppCompatActivity implements SignalDe
                     // in this method we are incrementing page number,
                     // making progress bar visible and calling get data method.
                     page++;
-                    if (page > limit){
-                        Toast.makeText(SignalDetailsActivity.this,"DO Nothing",Toast.LENGTH_SHORT);
-                    }else {
+                    if (page > limit) {
+                        Toast.makeText(SignalDetailsActivity.this, "DO Nothing", Toast.LENGTH_SHORT);
+                    } else {
                         mPresenter.getSignalList(SignalDetailsActivity.this, String.valueOf(page));
                     }
                 }
@@ -139,47 +145,73 @@ public class SignalDetailsActivity extends AppCompatActivity implements SignalDe
 
     public void gotoDetailsActivity(SignalsModel.Data data) {
         SaveSignalData.getInstance().setData(data);
-        startActivity(new Intent(SignalDetailsActivity.this,SignalDetailsActivity.class));
+        startActivity(new Intent(SignalDetailsActivity.this, SignalDetailsActivity.class));
         finish();
     }
 
     @Override
     public void renderSignalDetails(SignalsModel.Data details_data) {
-        Log.d("&*&*&^%%%%^^&*&^","----------renderSignalDetails---------------");
-        if (details_data != null){
-            Log.d("&*&*&^%%%%^^&*&^","-------------renderSignalDetails------------"+details_data.toString());
+        Log.d("&*&*&^%%%%^^&*&^", "----------renderSignalDetails---------------");
+        if (details_data != null) {
+            Log.d("&*&*&^%%%%^^&*&^", "-------------renderSignalDetails------------" + details_data.toString());
             shimmerLayout_details_top.stopShimmer();
             shimmerLayout_details_top.setVisibility(View.GONE);
             ll_details_signal.setVisibility(View.VISIBLE);
 
             if (details_data.getTitle() != null) {
-                Log.d("&*&*&^%%%%^^&*&^","-------------renderSignalDetails------------"+details_data.getTitle());
+                Log.d("&*&*&^%%%%^^&*&^", "-------------renderSignalDetails------------" + details_data.getTitle());
                 tv_signal_title.setText(details_data.getTitle());
             }
+
+            if (details_data.getSignal_status() != null){
+                tv_details_signal_status.setVisibility(View.VISIBLE);
+                tv_details_signal_status.setText(details_data.getSignal_status().toUpperCase());
+            }
+
             if (details_data.getTp_1() != null) {
-                Log.d("&*&*&^%%%%^^&*&^","-------------renderSignalDetails------------"+details_data.getTp_1());
-                tv_signal_tp_1.setText(String.format("TP_1: %s", details_data.getTp_1()));
+                Log.d("&*&*&^%%%%^^&*&^", "-------------renderSignalDetails------------" + details_data.getTp_1());
+                tv_signal_tp_1.setText(String.format("TP 1: %s", details_data.getTp_1()));
             }
             if (details_data.getTp_2() != null) {
-                Log.d("&*&*&^%%%%^^&*&^","-------------renderSignalDetails------------"+details_data.getTp_2());
-                tv_signal_tp_2.setText(String.format("TP_2: %s", details_data.getTp_2()));
+                Log.d("&*&*&^%%%%^^&*&^", "-------------renderSignalDetails------------" + details_data.getTp_2());
+                tv_signal_tp_2.setText(String.format("TP 2: %s", details_data.getTp_2()));
             }
-            if (details_data.getStop_loss()!= null) {
-                Log.d("&*&*&^%%%%^^&*&^","-------------renderSignalDetails------------"+details_data.getStop_loss());
+            if (details_data.getStop_loss() != null) {
+                Log.d("&*&*&^%%%%^^&*&^", "-------------renderSignalDetails------------" + details_data.getStop_loss());
                 tv_signal_stop_lose.setText(String.format("Stop Loss: %s", details_data.getStop_loss()));
             }
 
             if (details_data.getProfit_status() != null) {
-                Log.d("&*&*&^%%%%^^&*&^","-------------renderSignalDetails------------"+details_data.getProfit_status());
-                tv_signal_profit_status.setText(String.format("Profit Status: %s", details_data.getProfit_status()));
-            }
+                Log.d("&*&*&^%%%%^^&*&^", "-------------renderSignalDetails------------" + details_data.getProfit_status());
 
-            if (details_data.getProfit_pips() != null) {
-                Log.d("&*&*&^%%%%^^&*&^","-------------renderSignalDetails------------"+details_data.getProfit_pips());
-                tv_signal_profit_pips.setText(String.format("Profit pips: %s", details_data.getProfit_pips()));
+                if (details_data.getProfit_status().trim().equals("Open")) {
+                    rl_signal_details_profit_pips.setVisibility(View.GONE);
+                    tv_signal_profit_status.setTextColor(Color.parseColor("#020202"));
+                    tv_signal_profit_status.setText(String.format(" %s", details_data.getProfit_status()));
+
+
+                } else if (details_data.getProfit_status().trim().equals("Profit")) {
+                    rl_signal_details_profit_pips.setVisibility(View.VISIBLE);
+                    tv_signal_profit_status.setTextColor(Color.parseColor("#5FAD56"));
+                    tv_signal_profit_status.setText(String.format(" %s", details_data.getProfit_status().toUpperCase()));
+                    if (details_data.getProfit_pips() != null) {
+                        tv_signal_details_profit_pips_title.setText("Trade Profit:");
+                        tv_signal_profit_pips.setTextColor(Color.parseColor("#5FAD56"));
+                        tv_signal_profit_pips.setText(String.format(" %s", details_data.getProfit_pips()));
+                    }
+                } else if (details_data.getProfit_status().trim().equals("Loss")) {
+                    rl_signal_details_profit_pips.setVisibility(View.VISIBLE);
+                    tv_signal_profit_status.setTextColor(Color.parseColor("#D0312D"));
+                    tv_signal_profit_status.setText(String.format(" %s", details_data.getProfit_status().toUpperCase()));
+                    if (details_data.getProfit_pips() != null) {
+                        tv_signal_details_profit_pips_title.setText("Trade Loss:");
+                        tv_signal_profit_pips.setTextColor(Color.parseColor("#D0312D"));
+                        tv_signal_profit_pips.setText(String.format(" %s", details_data.getProfit_pips()));
+                    }
+                }
             }
             if (details_data.getCreated_at() != null) {
-                Log.d("&*&*&^%%%%^^&*&^","-------------renderSignalDetails------------"+details_data.getCreated_at());
+                Log.d("&*&*&^%%%%^^&*&^", "-------------renderSignalDetails------------" + details_data.getCreated_at());
                 tv_signal_time.setText(String.format("%s ago", calculateRemainingTime(details_data.getCreated_at())));
             }
         }
@@ -198,9 +230,9 @@ public class SignalDetailsActivity extends AppCompatActivity implements SignalDe
         rv_signals_details.setVisibility(View.VISIBLE);
 
 
-        if (signalsModel.getSignal_list() != null){
-            if (signalsModel.getSignal_list().size() != 0){
-                for (SignalsModel.Data signal : signalsModel.getSignal_list()){
+        if (signalsModel.getSignal_list() != null) {
+            if (signalsModel.getSignal_list().size() != 0) {
+                for (SignalsModel.Data signal : signalsModel.getSignal_list()) {
                     adapter.addSignals(signal);
                 }
             }

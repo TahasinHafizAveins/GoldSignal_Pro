@@ -27,4 +27,11 @@
         <item name="colorOnSurface">@color/purple_700</item>
 
     </style>
+
+    <style name="SpecificCornerRounded">
+        <item name="cornerSizeTopRight">75dp</item>
+        <item name="cornerFamilyTopRight">rounded</item>
+        <item name="cornerSizeTopLeft">75dp</item>
+        <item name="cornerFamilyTopLeft">rounded</item>
+    </style>
 </resources>

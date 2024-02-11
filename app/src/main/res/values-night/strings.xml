@@ -4,4 +4,7 @@
     <string name="please_wait">Please Wait...</string>
     <string name="app_update_notification">Dear user, you are using an old version. Update your app to continue the service.</string>
     <string name="update">UPDATE</string>
+    <string name="app_rate_us">RATE US</string>
+    <string name="app_rate_us_title">Tell others what you think about this app</string>
+    <string name="cancel">Cancel</string>
 </resources>
