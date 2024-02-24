@@ -83,6 +83,29 @@ public class HomePresenter implements HomeContact.Presenter{
     }
 
     @Override
+    public void getNextPageList(Context context, String page_number) {
+        Log.d("^^&&&&%%%%%5","-------getNextPageList---------");
+        ApiEndPoints call = RetrofitService.createService(context,ApiEndPoints.class);
+        call.getSignals(page_number).enqueue(new Callback<SignalsModel>() {
+            @Override
+            public void onResponse(Call<SignalsModel> call, Response<SignalsModel> response) {
+                if (response.isSuccessful()){
+                    Log.d("%%%%%%%%%%%%%%%","-------getNextPageList-----isSuccessful----");
+                    if (response.body() != null){
+                        Log.d("%%%%%%%%%%%%%%%","-------getNextPageList-----isSuccessful----"+response.body().toString());
+                        mView.renderNestedSignalList(response.body());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SignalsModel> call, Throwable t) {
+                Log.d("%%%%%%%%%%%%%%%","-------getNextPageList-onFailure--------");
+            }
+        });
+    }
+
+    @Override
     public void getLatest(Context context) {
         ApiEndPoints call = RetrofitService.createService(context,ApiEndPoints.class);
         call.getLatestSignal().enqueue(new Callback<LatestSignal>() {

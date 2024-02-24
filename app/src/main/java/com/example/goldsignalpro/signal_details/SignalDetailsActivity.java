@@ -21,8 +21,11 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.example.goldsignalpro.R;
 import com.example.goldsignalpro.home.HomeActivity;
 import com.example.goldsignalpro.model.SignalsModel;
+import com.example.goldsignalpro.utils.AdsManager;
 import com.example.goldsignalpro.utils.SaveSignalData;
 import com.facebook.shimmer.ShimmerFrameLayout;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
 
 public class SignalDetailsActivity extends AppCompatActivity implements SignalDetailContact.View {
 
@@ -35,6 +38,7 @@ public class SignalDetailsActivity extends AppCompatActivity implements SignalDe
     RecyclerView rv_signals_details;
     TextView tv_signal_title,tv_details_signal_status, tv_signal_tp_1, tv_signal_tp_2, tv_signal_stop_lose, tv_signal_profit_status, tv_signal_details_profit_pips_title, tv_signal_profit_pips, tv_signal_time;
     RelativeLayout rl_signal_details_profit_pips;
+
 
     int page = 1, limit = 1;
     SignalDetailsPresenter mPresenter;

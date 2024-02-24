@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
@@ -30,11 +31,19 @@ import com.example.goldsignalpro.model.LatestSignal;
 import com.example.goldsignalpro.model.SignalsModel;
 import com.example.goldsignalpro.settings.SettingsActivity;
 import com.example.goldsignalpro.signal_details.SignalDetailsActivity;
+import com.example.goldsignalpro.utils.AdsManager;
 import com.example.goldsignalpro.utils.SaveSignalData;
 import com.facebook.shimmer.ShimmerFrameLayout;
+import com.google.android.gms.ads.AdError;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.FullScreenContentCallback;
+import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
@@ -44,11 +53,13 @@ public class HomeActivity extends AppCompatActivity implements HomeContact.View 
     RecyclerView rv_signals;
     TextView tv_signal_title, tv_signal_time, tv_latest_signal_status;
     ImageView iv_settings, iv_rate_us, iv_share;
+    AdView adView;
+    InterstitialAd mInterstitialAd;
     CardView ll_latest_signal;
     SignalAdapter signalAdapter;
     NestedScrollView nsv_home;
     SwipeRefreshLayout srl_home;
-
+    SignalsModel.Data selected_signal;
     HomePresenter mPresenter;
     int page = 1, limit = 1;
     LatestSignal latestSignal = new LatestSignal();
@@ -57,15 +68,74 @@ public class HomeActivity extends AppCompatActivity implements HomeContact.View 
     private boolean rate_us_showing = false;
 
     private FirebaseAnalytics mFirebaseAnalytics;
+    private AdsManager adsManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         tool_bar_setup();
+        loadAds();
         mPresenter = new HomePresenter(HomeActivity.this);
         mPresenter.check_app_version(HomeActivity.this, BuildConfig.VERSION_NAME);
 
+    }
+
+    private void loadAds() {
+        adView = findViewById(R.id.adView);
+        adsManager = new AdsManager(HomeActivity.this);
+        adsManager.createAds(adView);
+        createInterstitialAds();
+
+    }
+
+    private void createInterstitialAds() {
+        AdRequest adRequest = new AdRequest.Builder().build();
+        InterstitialAd.load(HomeActivity.this, "ca-app-pub-3940256099942544/1033173712", adRequest, new InterstitialAdLoadCallback() {
+            @Override
+            public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                super.onAdFailedToLoad(loadAdError);
+                //Toast.makeText(HomeActivity.this, "failed: "+loadAdError.getCode(), Toast.LENGTH_SHORT).show();
+                mInterstitialAd = null;
+            }
+
+            @Override
+            public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                super.onAdLoaded(interstitialAd);
+                //Toast.makeText(HomeActivity.this, "Ad loaded Successfully ", Toast.LENGTH_SHORT).show();
+                // The mInterstitialAd reference will be null until
+                // an ad is loaded.
+                mInterstitialAd = interstitialAd;
+                interstitialAd.setFullScreenContentCallback(
+                        new FullScreenContentCallback() {
+                            @Override
+                            public void onAdDismissedFullScreenContent() {
+                                // Called when fullscreen content is dismissed.
+                                // Make sure to set your reference to null so you don't
+                                // show it a second time.
+                                mInterstitialAd = null;
+                                Log.d("###$$$#!!!!!!!", "The ad was dismissed.");
+                                startActivity();
+                            }
+
+                            @Override
+                            public void onAdFailedToShowFullScreenContent(AdError adError) {
+                                // Called when fullscreen content failed to show.
+                                // Make sure to set your reference to null so you don't
+                                // show it a second time.
+                                mInterstitialAd = null;
+                                Log.d("###$$$#!!!!!!!", "The ad failed to show.");
+                                startActivity();
+                            }
+
+                            @Override
+                            public void onAdShowedFullScreenContent() {
+                                // Called when fullscreen content is shown.
+                                Log.d("###$$$#!!!!!!!", "The ad was shown.");
+                            }
+                        });
+            }
+        });
     }
 
     private void tool_bar_setup() {
@@ -90,8 +160,6 @@ public class HomeActivity extends AppCompatActivity implements HomeContact.View 
             mPresenter = new HomePresenter(HomeActivity.this);
             mPresenter.check_app_version(HomeActivity.this, BuildConfig.VERSION_NAME);
         }
-
-        adMobInit();
         firebaseInit();
     }
 
@@ -104,15 +172,6 @@ public class HomeActivity extends AppCompatActivity implements HomeContact.View 
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW,bundle);
     }
 
-    private void adMobInit() {
-        // Initialize the Mobile Ads SDK
-        MobileAds.initialize(this, new OnInitializationCompleteListener() {
-            @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
-                Log.d("############","---------------initializationStatus---------"+initializationStatus);
-            }
-        });
-    }
 
     private void loadData() {
         shimmerFrameLayout = findViewById(R.id.shimmerLayout);
@@ -158,7 +217,7 @@ public class HomeActivity extends AppCompatActivity implements HomeContact.View 
                     if (page > limit) {
                         Toast.makeText(HomeActivity.this, "DO Nothing", Toast.LENGTH_SHORT);
                     } else {
-                        mPresenter.getSignalList(HomeActivity.this, String.valueOf(page));
+                        mPresenter.getNextPageList(HomeActivity.this, String.valueOf(page));
                     }
                 }
             }
@@ -316,6 +375,18 @@ public class HomeActivity extends AppCompatActivity implements HomeContact.View 
     }
 
     @Override
+    public void renderNestedSignalList(SignalsModel signalsModel) {
+        limit = signalsModel.getLast_page() != null ? Integer.parseInt(signalsModel.getLast_page()) : 1;
+        if (signalsModel.getSignal_list() != null) {
+            if (signalsModel.getSignal_list().size() != 0) {
+                for (SignalsModel.Data signal : signalsModel.getSignal_list()) {
+                    signalAdapter.addSignals(signal);
+                }
+            }
+        }
+    }
+
+    @Override
     public void signal_fetch_error(String message) {
 
     }
@@ -346,7 +417,19 @@ public class HomeActivity extends AppCompatActivity implements HomeContact.View 
     }
 
     public void gotoDetailsActivity(SignalsModel.Data selected_signal) {
+        this.selected_signal = selected_signal;
         SaveSignalData.getInstance().setData(selected_signal);
+        showAdsInt();
+    }
+
+    public void startActivity(){
         startActivity(new Intent(HomeActivity.this, SignalDetailsActivity.class));
+    }
+
+    public void showAdsInt(){
+
+        if (mInterstitialAd != null){
+            mInterstitialAd.show(HomeActivity.this);
+        }
     }
 }
