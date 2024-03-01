@@ -14,12 +14,23 @@
         android:supportsRtl="true"
         tools:targetApi="31">
         <activity
+            android:name=".about_us.AboutUSActivity"
+            android:exported="true"
+            android:parentActivityName=".settings.SettingsActivity"
+            android:label="About Us"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.GoldSignalPro">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".settings.SettingsActivity"
             android:exported="true"
-            android:screenOrientation="portrait"
             android:parentActivityName=".home.HomeActivity"
-            android:theme="@style/Theme.GoldSignalPro"
-            >
+            android:label="Settings"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.GoldSignalPro">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
@@ -42,9 +53,9 @@
         <activity
             android:name=".signal_details.SignalDetailsActivity"
             android:exported="true"
-            android:screenOrientation="portrait"
             android:label="Signal Details"
             android:parentActivityName=".home.HomeActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.GoldSignalPro" />
         <activity
             android:name=".home.HomeActivity"
@@ -55,9 +66,10 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-9933816283866409~2264377668" />
+            android:value="ca-app-pub-2615381531735310~9511703487" />
     </application>
 
 </manifest>

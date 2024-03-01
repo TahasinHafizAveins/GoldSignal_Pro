@@ -1,7 +1,7 @@
 package com.example.goldsignalpro.home;
 
 import static com.example.goldsignalpro.utils.utils.calculateRemainingTime;
-import static com.example.goldsignalpro.utils.utils_string.ADMOB_APP_ID;
+
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -32,6 +32,7 @@ import com.example.goldsignalpro.model.SignalsModel;
 import com.example.goldsignalpro.settings.SettingsActivity;
 import com.example.goldsignalpro.signal_details.SignalDetailsActivity;
 import com.example.goldsignalpro.utils.AdsManager;
+import com.example.goldsignalpro.utils.SaveAppInfo;
 import com.example.goldsignalpro.utils.SaveSignalData;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.gms.ads.AdError;
@@ -199,6 +200,8 @@ public class HomeActivity extends AppCompatActivity implements HomeContact.View 
         iv_settings = findViewById(R.id.iv_settings);
         iv_rate_us = findViewById(R.id.iv_rate_us);
         iv_share = findViewById(R.id.iv_share);
+        iv_rate_us.setEnabled(false);
+        iv_share.setEnabled(false);
 
         signalAdapter = new SignalAdapter(HomeActivity.this);
 
@@ -248,7 +251,7 @@ public class HomeActivity extends AppCompatActivity implements HomeContact.View 
         iv_share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                share_app();
             }
         });
 
@@ -293,8 +296,14 @@ public class HomeActivity extends AppCompatActivity implements HomeContact.View 
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             rate_us_showing = false;
-                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://goldsignalpro.com/")));
-                            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+
+                            if (SaveAppInfo.getInstance().getApp_update_link() == null || SaveAppInfo.getInstance().getApp_update_link().equals("")) {
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://goldsignalpro.com/")));
+                                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                            } else {
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(SaveAppInfo.getInstance().getApp_update_link())));
+                                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                            }
 
                         }
                     });
@@ -327,6 +336,20 @@ public class HomeActivity extends AppCompatActivity implements HomeContact.View 
         }
     }
 
+    private void share_app() {
+
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SEND);
+        intent.putExtra(android.content.Intent.EXTRA_SUBJECT, R.string.app_name);
+        if (SaveAppInfo.getInstance().getApp_update_link() == null || SaveAppInfo.getInstance().getApp_update_link().equals("")) {
+            intent.putExtra(Intent.EXTRA_TEXT, "https://goldsignalpro.com/");
+        } else {
+            intent.putExtra(Intent.EXTRA_TEXT, SaveAppInfo.getInstance().getApp_update_link());
+        }
+        intent.setType("text/plain");
+        startActivity(Intent.createChooser(intent, "Share using"));
+
+    }
     private void setupAdapter() {
         // setting layout manager to our recycler view.
         rv_signals.setLayoutManager(new LinearLayoutManager(HomeActivity.this));
@@ -419,7 +442,8 @@ public class HomeActivity extends AppCompatActivity implements HomeContact.View 
     public void gotoDetailsActivity(SignalsModel.Data selected_signal) {
         this.selected_signal = selected_signal;
         SaveSignalData.getInstance().setData(selected_signal);
-        showAdsInt();
+        startActivity();
+        //showAdsInt();
     }
 
     public void startActivity(){

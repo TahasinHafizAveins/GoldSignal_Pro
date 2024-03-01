@@ -11,6 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.widget.NestedScrollView;
@@ -24,8 +25,12 @@ import com.example.goldsignalpro.model.SignalsModel;
 import com.example.goldsignalpro.utils.AdsManager;
 import com.example.goldsignalpro.utils.SaveSignalData;
 import com.facebook.shimmer.ShimmerFrameLayout;
+import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.FullScreenContentCallback;
+import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 
 public class SignalDetailsActivity extends AppCompatActivity implements SignalDetailContact.View {
 
@@ -39,6 +44,8 @@ public class SignalDetailsActivity extends AppCompatActivity implements SignalDe
     TextView tv_signal_title,tv_details_signal_status, tv_signal_tp_1, tv_signal_tp_2, tv_signal_stop_lose, tv_signal_profit_status, tv_signal_details_profit_pips_title, tv_signal_profit_pips, tv_signal_time;
     RelativeLayout rl_signal_details_profit_pips;
 
+    //ads
+    InterstitialAd mInterstitialAd;
 
     int page = 1, limit = 1;
     SignalDetailsPresenter mPresenter;
@@ -51,10 +58,7 @@ public class SignalDetailsActivity extends AppCompatActivity implements SignalDe
 
         initView();
 
-        if (SaveSignalData.getInstance().getData() != null) {
-            data = SaveSignalData.getInstance().getData();
-            loadData();
-        }
+        createInterstitialAds();
 
     }
 
@@ -260,5 +264,70 @@ public class SignalDetailsActivity extends AppCompatActivity implements SignalDe
         super.onBackPressed();
         startActivity(new Intent(SignalDetailsActivity.this, HomeActivity.class));
         finish();
+    }
+
+    private void createInterstitialAds() {
+        AdRequest adRequest = new AdRequest.Builder().build();
+        InterstitialAd.load(SignalDetailsActivity.this, "ca-app-pub-3940256099942544/1033173712", adRequest, new InterstitialAdLoadCallback() {
+            @Override
+            public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                super.onAdFailedToLoad(loadAdError);
+                //Toast.makeText(HomeActivity.this, "failed: "+loadAdError.getCode(), Toast.LENGTH_SHORT).show();
+                mInterstitialAd = null;
+                loadActivity();
+            }
+
+            @Override
+            public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                super.onAdLoaded(interstitialAd);
+                //Toast.makeText(HomeActivity.this, "Ad loaded Successfully ", Toast.LENGTH_SHORT).show();
+                // The mInterstitialAd reference will be null until
+                // an ad is loaded.
+                mInterstitialAd = interstitialAd;
+                interstitialAd.setFullScreenContentCallback(
+                        new FullScreenContentCallback() {
+                            @Override
+                            public void onAdDismissedFullScreenContent() {
+                                // Called when fullscreen content is dismissed.
+                                // Make sure to set your reference to null so you don't
+                                // show it a second time.
+                                mInterstitialAd = null;
+                                Log.d("###$$$#!!!!!!!", "The ad was dismissed.");
+                                loadActivity();
+                            }
+
+                            @Override
+                            public void onAdFailedToShowFullScreenContent(AdError adError) {
+                                // Called when fullscreen content failed to show.
+                                // Make sure to set your reference to null so you don't
+                                // show it a second time.
+                                mInterstitialAd = null;
+                                Log.d("###$$$#!!!!!!!", "The ad failed to show.");
+                                loadActivity();
+                            }
+
+                            @Override
+                            public void onAdShowedFullScreenContent() {
+                                // Called when fullscreen content is shown.
+                                Log.d("###$$$#!!!!!!!", "The ad was shown.");
+                            }
+                        });
+                showAdsInt();
+            }
+        });
+    }
+
+    private void loadActivity() {
+        if (SaveSignalData.getInstance().getData() != null) {
+            data = SaveSignalData.getInstance().getData();
+            loadData();
+        }
+    }
+
+    public void showAdsInt(){
+
+        if (mInterstitialAd != null){
+            mInterstitialAd.show(SignalDetailsActivity.this);
+        }
     }
 }

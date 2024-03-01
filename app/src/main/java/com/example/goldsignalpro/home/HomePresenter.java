@@ -11,6 +11,7 @@ import com.example.goldsignalpro.model.LatestSignal;
 import com.example.goldsignalpro.model.SignalsModel;
 import com.example.goldsignalpro.utils.ApiEndPoints;
 import com.example.goldsignalpro.utils.RetrofitService;
+import com.example.goldsignalpro.utils.SaveAppInfo;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -35,7 +36,7 @@ public class HomePresenter implements HomeContact.Presenter{
                        AppVersionModel appVersionModel = new AppVersionModel();
                        appVersionModel.setVersion(response.body().getVersion());
                        appVersionModel.setApp_link(response.body().getApp_link());
-
+                       SaveAppInfo.getInstance().setApp_update_link(response.body().getApp_link() != null? response.body().getApp_link() : "");
                        int version_diff = compareVersionNames(installed_app_version,appVersionModel.getVersion().toString().trim() );
                        if (version_diff == -1) {
                            mView.need_to_update_app(appVersionModel);
@@ -44,12 +45,14 @@ public class HomePresenter implements HomeContact.Presenter{
                        }
                    }
                }else {
+                   SaveAppInfo.getInstance().setApp_update_link("");
                    mView.app_already_updated();
                }
            }
 
            @Override
            public void onFailure(Call<AppVersionModel> call, Throwable t) {
+               SaveAppInfo.getInstance().setApp_update_link("");
                mView.app_already_updated();
            }
        });

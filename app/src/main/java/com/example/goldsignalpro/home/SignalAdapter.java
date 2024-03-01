@@ -1,10 +1,8 @@
 package com.example.goldsignalpro.home;
 
 import static com.example.goldsignalpro.utils.utils.calculateRemainingTime;
-import static com.example.goldsignalpro.utils.utils.getFormattedTime;
 
-import android.app.Activity;
-import android.content.Context;
+
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;

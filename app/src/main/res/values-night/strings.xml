@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Gold Signal Pro</string>
     <string name="please_wait">Please Wait...</string>
@@ -7,4 +6,10 @@
     <string name="app_rate_us">RATE US</string>
     <string name="app_rate_us_title">Tell others what you think about this app</string>
     <string name="cancel">Cancel</string>
-</resources>
+    <string name="about_us">About Us</string>
+    <string name="rate_us">Rate Us</string>
+    <string name="share_with_friends">Share To Friends</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="about_us_details">We provide high quality VIP signals without any cost. We have proven that our forex signal works almost 97% also has long year experience in forex trading.\n\n\n  \u2022 10 years + experience in forex trading\n\n  \u2022 5–12 VIP XAUUSD gold signal every day\n\n  \u2022 97% signal accuracy\n\n  \u2022 Sharing technical analysis and knowledge for becoming profitable traders\n\nSee our technical analysis and blog at <a href="https://goldsignalpro.com/">https://goldsignalpro.com</a> \n\nAny query ? write us at: <a href="contract@goldsignalpro.com/">contract@goldsignalpro.com</a></string>
+    <string name="trade_waring"> <b>High Risk!</b> \n You could lose some or all of your initial investment.\nDo not invest money that you cannot afford to lose!</string>
+    </resources>

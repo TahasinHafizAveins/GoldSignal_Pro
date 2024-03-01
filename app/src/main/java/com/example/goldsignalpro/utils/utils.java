@@ -71,7 +71,7 @@ public class utils {
         String formattedDate = "";
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.US);
         SimpleDateFormat outputFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.US);
-        outputFormat.setTimeZone(TimeZone.getTimeZone("GMT+6:00"));
+        outputFormat.setTimeZone(TimeZone.getTimeZone("GMT+12:00"));
         Date date = null;
         try {
             date = inputFormat.parse(remaining_time);

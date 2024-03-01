@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "939929100779",
-    "project_id": "goldsignalpro-c5a98",
-    "storage_bucket": "goldsignalpro-c5a98.appspot.com"
+    "project_number": "266510146573",
+    "project_id": "goldsignalpro-c3706",
+    "storage_bucket": "goldsignalpro-c3706.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:939929100779:android:bec76a39cda0fb6b4079ae",
+        "mobilesdk_app_id": "1:266510146573:android:961b0afca5ddff9b28c944",
         "android_client_info": {
-          "package_name": "com.example.goldsignalpro"
+          "package_name": "com.gsp.goldsignalpro"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyApCfHFKKpcSbcvsVyTPBQZSKhlcwLE67M"
+          "current_key": "AIzaSyCo1gIRNikHbf17zTd-r0UKRsAAI-X580A"
         }
       ],
       "services": {
